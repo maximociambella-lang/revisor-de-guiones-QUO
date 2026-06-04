@@ -159,7 +159,12 @@ def revisar(guion: str, archivo_cuenta: str) -> str:
         system=system,
         messages=[{"role": "user", "content": guion}],
     ) as stream:
-        return stream.get_final_message().content[0].text
+        message = stream.get_final_message()
+        # busca el primer bloque de texto (ignora ThinkingBlock)
+        for block in message.content:
+            if block.type == "text":
+                return block.text
+        return "No se pudo obtener una respuesta."
 
 # ── encabezado de cuenta ──────────────────────────────────────────────────────
 st.markdown(f"""
